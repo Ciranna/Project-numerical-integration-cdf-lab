@@ -2,11 +2,12 @@ import {functions} from './functions/standardFunctions.js';
 import {levelSetIntegral} from './integration/lebesgue.js';
 import {pathologicalCases} from './functions/pathologicalFunctions.js';
 import {riemannSum} from './integration/riemann.js';
+import {improperLebesgue,truncationStudy,levelConvergenceStudy,sampleConvergenceStudy} from './integration/improperLebesgue.js';
 import {downloadCsv} from './utils/csv.js';
 const $=id=>document.getElementById(id);
 const select=$('leb-function');
 for(const [key,f] of Object.entries(functions)){
- if(key==='inverseSqrt')continue; // unbounded; requires separate truncation treatment
+ if(key==='inverseSqrt')continue; // separate truncation experiment below
  const o=document.createElement('option');o.value=key;o.textContent=f.label;select.append(o);
 }
 select.value='square';let last;
@@ -39,3 +40,40 @@ $('tab-cdf').addEventListener('click',()=>show('cdf'));
 $('tab-analysis').addEventListener('click',()=>show('analysis'));
 function show(which){for(const name of ['riemann','lebesgue','cdf','analysis']){$(`${name}-lab`).hidden=name!==which;$(`tab-${name}`).classList.toggle('active',name===which);}}
 render();pathology();
+
+// Academic review: independent value-level and domain-sample convergence experiments.
+const convergenceFunction=$('leb-conv-function');
+for(const [key,f] of Object.entries(functions)){
+ if(key==='inverseSqrt')continue;
+ const option=document.createElement('option');option.value=key;option.textContent=f.label;convergenceFunction.append(option);
+}
+convergenceFunction.value='square';
+function rowsToTable(id,rows){
+ const body=$(id);body.replaceChildren();
+ for(const row of rows){
+  const tr=document.createElement('tr');
+  for(const val of row){const td=document.createElement('td');td.textContent=String(val);tr.append(td);}
+  body.append(tr);
+ }
+}
+function renderConvergence(){
+ const f=functions[convergenceFunction.value];
+ const levels=levelConvergenceStudy(f.fn,f.a,f.b,f.exact,[8,16,32,64,128],16384);
+ const samples=sampleConvergenceStudy(f.fn,f.a,f.b,f.exact,64,[1024,4096,16384,65536]);
+ rowsToTable('leb-level-study',levels.map(r=>[r.levels,r.estimate.toFixed(9),r.error.toExponential(3)]));
+ rowsToTable('leb-sample-study',samples.map(r=>[r.samples.toLocaleString(),r.estimate.toFixed(9),r.error.toExponential(3)]));
+}
+convergenceFunction.addEventListener('change',renderConvergence);
+renderConvergence();
+function renderImproper(){
+ const M=Number($('leb-truncation').value),levels=Number($('leb-improper-levels').value),samples=Number($('leb-improper-samples').value);
+ const r=improperLebesgue(M,levels,samples);
+ $('leb-truncation-value').textContent=M;
+ $('leb-improper-result').textContent=r.estimate.toFixed(9);
+ $('leb-improper-reference').textContent=r.truncatedExact.toFixed(9);
+ $('leb-improper-gap').textContent=r.truncationError.toFixed(6);
+ $('leb-improper-note').textContent=`Sampled value-level estimate for min(1/√x, ${M}). The exact truncated integral is 2 − 1/${M}; the original Lebesgue integral is 2. Level/sample discretization can cause non-monotone numerical estimates even though the exact truncated integrals increase monotonically.`;
+ rowsToTable('leb-truncation-study',truncationStudy(levels,samples).map(row=>[row.M,row.truncatedExact.toFixed(6),row.estimate.toFixed(6),row.samplingAndLevelError.toExponential(2)]));
+}
+for(const id of ['leb-truncation','leb-improper-levels','leb-improper-samples'])$(id).addEventListener('input',renderImproper);
+renderImproper();

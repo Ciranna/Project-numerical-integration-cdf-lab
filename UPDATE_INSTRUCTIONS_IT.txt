@@ -1,0 +1,16 @@
+HOMEWORK 5 — Academic Final Review (Fase 5.1)
+
+1. Estrai lo ZIP.
+2. Copia tutti i file e le cartelle dentro Homework5_Academic_Final_Review nella tua cartella esistente ~/Project-numerical-integration-cdf-lab, sovrascrivendo quando richiesto.
+3. NON eliminare package-lock.json o node_modules dalla cartella esistente. Questo archivio non contiene package-lock.json: conserva quello già presente nel tuo progetto.
+4. Apri un terminale:
+   cd ~/Project-numerical-integration-cdf-lab
+   npm test
+   npm run build
+   npm run dev
+5. Controlla la scheda Lebesgue: nuove sezioni Convergence e Improper integral.
+6. Se tutto funziona:
+   git add .
+   git commit -m "Academic final review - Homework 5"
+   git push origin main
+7. GitHub Actions dovrebbe avviare il deploy automaticamente.

@@ -1,57 +1,50 @@
 # Homework 5 — Numerical Integration & Normal CDF Lab
 
-Interactive mathematical computing project. **Phase 1** implements Exercise 1 (Riemann quadrature); the Lebesgue and Normal CDF modules will be implemented in later phases.
+A browser-based mathematical computing project for **Homework 5**, covering both assigned exercises: numerical Riemann/Lebesgue-inspired integration and numerical computation of the standard normal CDF.
 
-## Requirements
-Node.js 20+ and npm.
+## Features
+
+1. **Riemann integration:** left, right, midpoint sums, function/rectangle plots, error and convergence tables, including a numerical improper-integral example.
+2. **Lebesgue-inspired integration:** partition function values into bins, estimate measures of their preimages by domain midpoint sampling, compare with Riemann, and discuss Dirichlet and Thomae analytically.
+3. **Monotone truncation:** explore `min(1/sqrt(x), M)` and its exact integral `2 - 1/M` as `M` increases, plus the sampled numerical estimate.
+4. **Two convergence experiments:** vary value levels with fixed domain samples, or vary domain samples with fixed value levels.
+5. **Standard normal CDF:** trapezoidal and Simpson quadrature, Taylor expansion of erf, and an erf polynomial approximation; compare against tabulated reference probabilities.
+6. **Accuracy and efficiency:** repeated-batch benchmark, median runtime, algorithmic evaluation counts, stability table, and CSV exports.
 
 ## Run locally
+
+Requires Node.js 20+ and npm.
+
 ```bash
 npm install
-npm run dev
-```
-Open the local URL printed by Vite (usually http://localhost:5173/).
-
-## Tests and production build
-```bash
 npm test
+npm run dev
 npm run build
 ```
 
-## Implemented
-- Riemann left, right and midpoint sums
-- Seven functions, including a discontinuous step, removable singularity and improper integral
-- Interactive SVG rectangles and convergence plot
-- Exact reference values, absolute errors and CSV export
-- Automated tests for numerical methods
-
-## Mathematical notes
-- The `1/sqrt(x)` case is an **improper integral**, not a proper Riemann integral on [0,1]. The left endpoint rule is deliberately marked not applicable.
-- The `sin(x)/x` function is continuously extended at zero by defining its value as 1.
-- The exact reference for the sine integral is `Si(pi) ≈ 1.851937051982466`.
-- For rendering, the SVG displays at most 250 rectangles; the integration calculation uses all selected partitions.
-
-## Planned
-- Lebesgue-style value-layer integration with preimage-measure approximations
-- Dirichlet and Thomae: mathematically faithful handling of measure and numerical sampling limitations
-- Standard normal CDF via Simpson, trapezoidal, erf series and reference comparison
-- Performance benchmarks, reports and GitHub Pages deployment
+Open the local URL displayed by Vite, normally http://localhost:5173/.
 
 ## GitHub Pages
-The Vite base path is preconfigured for `Project-numerical-integration-cdf-lab`. GitHub Pages deployment will be added in the final phase.
 
-## Phase 2 — Lebesgue level-set demonstration
+The Vite base is `/Project-numerical-integration-cdf-lab/`. A GitHub Actions workflow under `.github/workflows/deploy.yml` runs tests and builds the site, then deploys `dist/` to GitHub Pages. Set **Settings → Pages → Source: GitHub Actions** in the repository.
 
-The second tab partitions the **range** into value bins and approximates each bin's preimage measure by uniform domain-cell midpoint sampling. It reports lower/upper level approximations and their midpoint, and compares against a Riemann midpoint sum. **Important:** finite samples cannot compute the exact Lebesgue measure of arbitrary sets. The reported lower/upper quantities are bounds for the sampled discretization, not rigorous bounds on the true integral without additional assumptions. For Dirichlet and Thomae, the application instead shows the rigorous mathematical conclusions, without pretending floating-point rationality tests are meaningful.
+## Mathematical interpretation and limitations
 
-The unbounded inverse-square-root function is deliberately excluded from the bounded-function level-set implementation; its Lebesgue integral needs truncation/monotone-convergence treatment, which is a later extension.
+- **Riemann vs. Lebesgue:** both agree on bounded Riemann-integrable functions. Dirichlet is not Riemann-integrable but has Lebesgue integral 0; Thomae is integrable in both senses with integral 0.
+- **Numerical Lebesgue approximation:** domain-cell midpoint counts only approximate preimage measures. Its reported lower/upper estimates bound the sampled value quantization, **not necessarily the true integral**.
+- **Unbounded integrand:** `1/sqrt(x)` has an improper integral and a Lebesgue integral equal to 2. The truncations `f_M=min(1/sqrt(x),M)` have exact integrals `2-1/M` for M≥1. Monotone convergence applies to the exact integrals; sampled numerical approximations need not be monotone.
+- **Normal CDF:** `Phi(x)=1/2 + integral_0^x phi(t)dt` follows by symmetry; `Phi(x)=(1+erf(x/sqrt(2)))/2` is an exact special-function representation. The Gaussian has no elementary antiderivative (Liouville's theorem on elementary integration).
+- **Efficiency:** timing depends on the browser, hardware, JIT and timer resolution; one polynomial call is not equivalent in CPU cost to one density evaluation. Compare accuracy and evaluation budgets as well as runtime.
+- **Taylor:** alternating-series cancellation may limit numerical stability for large |x|. The plotted finite domain also truncates the displayed normal tails; it does not truncate the CDF integral calculation.
 
-## Phase 3 — Normal CDF (Homework 5, Exercise 2)
+## Documentation
 
-The third tab implements composite trapezoidal integration, composite Simpson integration, an erf Taylor series, and an Abramowitz–Stegun erf approximation. The normal-CDF integration uses symmetry to avoid truncating the lower infinite integration limit. A reference table enables error comparisons and a convergence chart; the CDF plot and CSV export are interactive. See `docs/NORMAL_CDF_THEORY_EN.md` for derivations and numerical limitations.
+- `docs/THEORY_EN.md` — Riemann fundamentals
+- `docs/LEBESGUE_THEORY_EN.md` — level sets, preimages, pathology
+- `docs/NORMAL_CDF_THEORY_EN.md` — Gaussian CDF and erf
+- `docs/ACCURACY_PERFORMANCE_EN.md` — error and runtime discussion
+- `docs/ACADEMIC_FINAL_REVIEW_EN.md` — final oral-ready theoretical and numerical conclusions
 
-Run `npm test`, `npm run build`, and `npm run dev` after extracting/copying this archive over the Phase 2 project.
+## Testing
 
-
-## Phase 4 — Accuracy and Efficiency
-A fourth tab runs repeated-batch benchmarks for Normal CDF methods and Riemann versus sampled Lebesgue, showing median runtime, absolute error and evaluation count. A stability table compares CDF errors across reference points. CSV export is available for both experiments. Read `docs/ACCURACY_PERFORMANCE_EN.md` for limitations and oral discussion.
+The automated suite covers numerical identities, convergence, pathological classifications, CDF methods, benchmark infrastructure and monotone truncation. Passing tests verifies these tested cases, not a mathematical proof of correctness for arbitrary inputs.
