@@ -1,0 +1,14 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {normalPDF,cdfTrapezoid,cdfSimpson,cdfTaylor,cdfErfApprox,erfTaylor,erfApprox,REFERENCES} from '../js/probability/normalCDF.js';
+const near=(a,b,tol=1e-8)=>assert.ok(Math.abs(a-b)<tol,`${a} != ${b}`);
+test('density at zero',()=>near(normalPDF(0),1/Math.sqrt(2*Math.PI),1e-15));
+test('all CDF methods give one half at zero',()=>{for(const fn of [cdfTrapezoid,cdfSimpson,cdfTaylor,cdfErfApprox])near(fn(0),.5,2e-8);});
+test('Simpson matches reference at tabulated points',()=>{for(const {x,cdf} of REFERENCES)near(cdfSimpson(x,200),cdf,2e-8);});
+test('trapezoidal rule converges',()=>{const exact=REFERENCES.find(r=>r.x===2).cdf;assert.ok(Math.abs(cdfTrapezoid(2,200)-exact)<Math.abs(cdfTrapezoid(2,20)-exact));});
+test('Taylor series matches normal CDF on moderate x',()=>{for(const x of [-3,-2,-1,0,1,2,3]){const ref=REFERENCES.find(r=>r.x===x).cdf;near(cdfTaylor(x,45),ref,1e-9);}});
+test('erf approximation within published tolerance',()=>{for(const {x,cdf} of REFERENCES)near(cdfErfApprox(x),cdf,1e-7);});
+test('CDF symmetry',()=>{for(const x of [.5,1,2,3])near(cdfSimpson(-x,200),1-cdfSimpson(x,200),1e-14);});
+test('erf oddness',()=>{near(erfTaylor(-.8,20),-erfTaylor(.8,20),1e-14);near(erfApprox(-.8),-erfApprox(.8),1e-14);});
+test('Simpson rejects odd partitions',()=>assert.throws(()=>cdfSimpson(1,5),/even/));
+test('methods reject invalid inputs',()=>{assert.throws(()=>cdfTrapezoid(Infinity,100));assert.throws(()=>cdfTaylor(1,0));assert.throws(()=>cdfSimpson(1,0));});

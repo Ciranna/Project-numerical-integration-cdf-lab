@@ -1,0 +1,14 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {riemannSum,evaluateAll} from '../js/integration/riemann.js';
+import {getFunction} from '../js/functions/standardFunctions.js';
+import {convergenceStudy} from '../js/integration/convergence.js';
+test('constant function integrates exactly for all methods',()=>{for(const method of ['left','right','midpoint'])assert.ok(Math.abs(riemannSum(()=>3,0,2,17,method)-6)<1e-12);});
+test('x² midpoint converges to 1/3',()=>{const f=getFunction('square');assert.ok(Math.abs(riemannSum(f.fn,f.a,f.b,1000)-1/3)<1e-6);});
+test('sin midpoint converges to 2',()=>{const f=getFunction('sine');assert.ok(Math.abs(riemannSum(f.fn,f.a,f.b,1000)-2)<1e-5);});
+test('step function integrates exactly when partition aligns with jump',()=>{const f=getFunction('step13');assert.equal(riemannSum(f.fn,0,1,100,'midpoint'),2);});
+test('absolute value midpoint exact for even n',()=>{const f=getFunction('absolute');assert.ok(Math.abs(riemannSum(f.fn,0,1,100,'midpoint')-.25)<1e-12);});
+test('sinc handles zero by continuity',()=>{assert.equal(getFunction('sinc').fn(0),1);});
+test('improper 1/sqrt(x) left sum is rejected',()=>{const f=getFunction('inverseSqrt');assert.throws(()=>riemannSum(f.fn,0,1,20,'left'),RangeError);assert.equal(evaluateAll(f.fn,0,1,20).left,null);});
+test('improper 1/sqrt(x) midpoint approximates 2',()=>{const f=getFunction('inverseSqrt');assert.ok(Math.abs(riemannSum(f.fn,0,1,100000,'midpoint')-2)<.01);});
+test('invalid partition and method rejected',()=>{assert.throws(()=>riemannSum(x=>x,0,1,0),RangeError);assert.throws(()=>riemannSum(x=>x,0,1,10,'invalid'),RangeError);});
+test('convergence improves for x² midpoint',()=>{const f=getFunction('square'),series=convergenceStudy(f);assert.ok(series.at(-1).error<series[0].error);});

@@ -1,0 +1,10 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {benchmark,median,evaluationCount,cdfBenchmark,cdfAccuracyGrid,integrationBenchmark} from '../js/analysis/benchmark.js';
+test('median for odd and even samples',()=>{assert.equal(median([5,1,3]),3);assert.equal(median([8,2,4,6]),5);});
+test('evaluation counts distinguish integration and series',()=>{assert.equal(evaluationCount('simpson',100),101);assert.equal(evaluationCount('trapezoid',10),11);assert.equal(evaluationCount('taylor',30),30);assert.equal(evaluationCount('erf',1),1);});
+test('benchmark supports injected deterministic clock',()=>{let time=0;const result=benchmark(()=>{time+=2;return 1;},{repetitions:3,batchSize:5,clock:()=>time});assert.equal(result.medianMs,2);assert.equal(result.checksum,15);});
+test('benchmark rejects invalid batch sizes',()=>assert.throws(()=>benchmark(()=>1,{batchSize:0}),RangeError));
+test('CDF benchmark produces 4 methods with valid errors',()=>{const rows=cdfBenchmark(1,20,{repetitions:2,batchSize:2});assert.equal(rows.length,4);assert.ok(rows.every(r=>Number.isFinite(r.medianMs)&&r.error>=0));});
+test('CDF accuracy grid includes reference and low Simpson error',()=>{const rows=cdfAccuracyGrid([-2,0,1],100);assert.equal(rows.length,3);assert.ok(rows.every(r=>r.simpsonError<1e-8));});
+test('integration benchmark compares evaluation budgets',()=>{const rows=integrationBenchmark('square',16,{repetitions:2,batchSize:2});assert.equal(rows[0].evaluations,16);assert.equal(rows[1].evaluations,4096);});
+test('invalid accuracy grid parameter rejected',()=>assert.throws(()=>cdfAccuracyGrid([1],3),RangeError));
