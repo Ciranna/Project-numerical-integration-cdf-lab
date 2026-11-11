@@ -4,3 +4,6 @@
 input[type=number]{background:#0d1727;border:1px solid #41526a;color:#f3f7fc;padding:12px;border-radius:9px;width:100%}#cdf-density,#cdf-convergence{min-height:190px}
 
 #analysis-chart{min-height:160px;max-height:270px;margin-top:12px}button:disabled{opacity:.45;cursor:not-allowed}#analysis-lab .table-scroll{max-width:100%}#analysis-lab td{white-space:nowrap}#analysis-lab .controls{margin-top:14px}
+
+/* Academic conclusions */
+.conclusion-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.finding{background:#172337;border:1px solid #2a3b53;border-radius:12px;padding:18px}.finding h3{margin:0 0 10px;color:#e5fff9;font-size:1.05rem}.finding p{margin:0;color:#b7c7db;font-size:.93rem}.finding-label{display:block;color:#5eead4;letter-spacing:.1em;font-size:.72rem;font-weight:700;margin-bottom:10px}.conclusion-final{border-color:#167f77}.conclusion-final p{max-width:1000px}#conclusions-lab table td{vertical-align:top}#conclusions-lab .table-scroll{margin-top:12px}@media(max-width:760px){.conclusion-grid{grid-template-columns:1fr}}

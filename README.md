@@ -10,6 +10,7 @@ A browser-based mathematical computing project for **Homework 5**, covering both
 4. **Two convergence experiments:** vary value levels with fixed domain samples, or vary domain samples with fixed value levels.
 5. **Standard normal CDF:** trapezoidal and Simpson quadrature, Taylor expansion of erf, and an erf polynomial approximation; compare against tabulated reference probabilities.
 6. **Accuracy and efficiency:** repeated-batch benchmark, median runtime, algorithmic evaluation counts, stability table, and CSV exports.
+7. **Conclusions & Findings:** fifth tab with both exercises’ mathematical findings, a clearly labeled measured benchmark example, limitations, and possible extensions.
 
 ## Run locally
 
@@ -43,7 +44,8 @@ The Vite base is `/Project-numerical-integration-cdf-lab/`. A GitHub Actions wor
 - `docs/LEBESGUE_THEORY_EN.md` — level sets, preimages, pathology
 - `docs/NORMAL_CDF_THEORY_EN.md` — Gaussian CDF and erf
 - `docs/ACCURACY_PERFORMANCE_EN.md` — error and runtime discussion
-- `docs/ACADEMIC_FINAL_REVIEW_EN.md` — final oral-ready theoretical and numerical conclusions
+- `docs/ACADEMIC_FINAL_REVIEW_EN.md` — theoretical and numerical review
+- `docs/CONCLUSIONS_AND_FINDINGS_EN.md` — full concluding discussion and oral presentation notes
 
 ## Testing
 

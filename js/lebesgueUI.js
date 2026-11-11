@@ -38,7 +38,8 @@ $('tab-riemann').addEventListener('click',()=>show('riemann'));
 $('tab-lebesgue').addEventListener('click',()=>show('lebesgue'));
 $('tab-cdf').addEventListener('click',()=>show('cdf'));
 $('tab-analysis').addEventListener('click',()=>show('analysis'));
-function show(which){for(const name of ['riemann','lebesgue','cdf','analysis']){$(`${name}-lab`).hidden=name!==which;$(`tab-${name}`).classList.toggle('active',name===which);}}
+$('tab-conclusions').addEventListener('click',()=>show('conclusions'));
+function show(which){for(const name of ['riemann','lebesgue','cdf','analysis','conclusions']){$(`${name}-lab`).hidden=name!==which;$(`tab-${name}`).classList.toggle('active',name===which);}}
 render();pathology();
 
 // Academic review: independent value-level and domain-sample convergence experiments.
